@@ -1,0 +1,27 @@
+timezone: Asia/Bangkok
+
+api:
+  host: 0.0.0.0
+  port: 3000
+  secretkey: abcd
+
+db:
+  dsn: ./database.db
+  # dsn: root:abcd1234@tcp(127.0.0.1:3306)/true
+
+snmp:
+  target_host: 10.50.197.29
+  target_port: 22010
+  agent_host: 10.50.89.234
+
+elasticsearch:
+  host: http://10.50.89.235:9200
+  username: solar-agent
+  password: P@ssw0rd
+  index: solarcell
+
+redis:
+  addr: http://localhost:6379
+  user:
+  password:
+  db: 0
