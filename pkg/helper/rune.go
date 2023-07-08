@@ -2,6 +2,7 @@ package helper
 
 import (
 	"bytes"
+	"strings"
 	"unicode"
 )
 
@@ -18,4 +19,9 @@ func AddSpace(s string) string {
 		last = rune
 	}
 	return buf.String()
+}
+
+func EmptyString(s string) bool {
+	str := strings.TrimSpace(s)
+	return str == ""
 }

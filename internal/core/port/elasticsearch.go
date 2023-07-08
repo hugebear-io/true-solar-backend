@@ -63,20 +63,20 @@ type DeviceItem struct {
 	SiteCityCode           string     `json:"site_city_code"`
 	NodeType               string     `json:"node_type"`
 	ACPhase                int        `json:"ac_phase"`
-	PlantID                *string    `json:"plant_id"`
-	PlantName              *string    `json:"plant_name"`
-	Latitude               *float64   `json:"lat"`
-	Longitude              *float64   `json:"lng"`
-	Location               *string    `json:"location"`
-	ID                     *string    `json:"id"`
-	SN                     *string    `json:"sn"`
-	Name                   *string    `json:"name"`
-	DeviceType             *string    `json:"device_type"`
-	Status                 *string    `json:"status"`
-	TotalPowerGeneration   *float64   `json:"total_power_generation"`
-	DailyPowerGeneration   *float64   `json:"daily_power_generation"`
-	MonthlyPowerGeneration *float64   `json:"monthly_power_generation"`
-	YearlyPowerGeneration  *float64   `json:"yearly_power_generation"`
+	PlantID                string     `json:"plant_id"`
+	PlantName              string     `json:"plant_name"`
+	Latitude               float64    `json:"lat"`
+	Longitude              float64    `json:"lng"`
+	Location               string     `json:"location"`
+	ID                     string     `json:"id"`
+	SN                     string     `json:"sn"`
+	Name                   string     `json:"name"`
+	DeviceType             string     `json:"device_type"`
+	Status                 string     `json:"status"`
+	TotalPowerGeneration   float64    `json:"total_power_generation"`
+	DailyPowerGeneration   float64    `json:"daily_power_generation"`
+	MonthlyPowerGeneration float64    `json:"monthly_power_generation"`
+	YearlyPowerGeneration  float64    `json:"yearly_power_generation"`
 	LastUpdateTime         *time.Time `json:"last_update_time"`
 }
 
@@ -93,28 +93,28 @@ type AlarmItem struct {
 	SiteCityCode string     `json:"site_city_code"`
 	NodeType     string     `json:"node_type"`
 	ACPhase      int        `json:"ac_phase"`
-	PlantID      *string    `json:"plant_id"`
-	PlantName    *string    `json:"plant_name"`
-	Latitude     *float64   `json:"lat"`
-	Longitude    *float64   `json:"lng"`
-	Location     *string    `json:"location"`
-	DeviceID     *string    `json:"device_id"`
-	DeviceSN     *string    `json:"device_sn"`
-	DeviceName   *string    `json:"device_name"`
-	DeviceType   *string    `json:"device_type"`
-	DeviceStatus *string    `json:"device_status"`
-	ID           *string    `json:"id"`
-	Message      *string    `json:"message"`
+	PlantID      string     `json:"plant_id"`
+	PlantName    string     `json:"plant_name"`
+	Latitude     float64    `json:"lat"`
+	Longitude    float64    `json:"lng"`
+	Location     string     `json:"location"`
+	DeviceID     string     `json:"device_id"`
+	DeviceSN     string     `json:"device_sn"`
+	DeviceName   string     `json:"device_name"`
+	DeviceType   string     `json:"device_type"`
+	DeviceStatus string     `json:"device_status"`
+	ID           string     `json:"id"`
+	Message      string     `json:"message"`
 	AlarmTime    *time.Time `json:"alarm_time"`
 }
 
 type SiteItem struct {
-	Timestamp   time.Time `json:"@timestamp"`
-	VendorType  string    `json:"vendor_type"`
-	Area        string    `json:"area"`
-	SiteID      string    `json:"site_id"`
-	NodeType    string    `json:"node_type"`
-	Name        *string   `json:"name"`
-	Location    *string   `json:"location"`
-	PlantStatus *string   `json:"plant_status"`
+	Timestamp   *time.Time `json:"@timestamp"`
+	VendorType  string     `json:"vendor_type"`
+	Area        string     `json:"area"`
+	SiteID      string     `json:"site_id"`
+	NodeType    string     `json:"node_type"`
+	Name        string     `json:"name"`
+	Location    string     `json:"location"`
+	PlantStatus string     `json:"plant_status"`
 }
