@@ -14,7 +14,7 @@ import (
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solar-api.log",
+		LogName:     "logs/huawei-inverter.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -33,18 +33,10 @@ func main() {
 
 	// bind api
 	api.BindHealthCheckAPI(router)
-	api.BindAccessLogAPI(router, infra.SqlDB, l)
-	api.BindAlarmConfigAPI(router, infra.SqlDB, l)
-	api.BindDataCollectorConfigAPI(router, infra.SqlDB, l)
-	api.BindInstalledCapacityConfigAPI(router, infra.SqlDB, l)
-	api.BindLoginAPI(router, apiConfig.SecretKey, infra.SqlDB, l)
-	api.BindPerformanceAlarmConfigAPI(router, infra.SqlDB, l)
-	api.BindRedisConfigAPI(router, infra.SqlDB, l)
-	api.BindSNMPConfigAPI(router, infra.SqlDB, l)
-	api.BindUserAPI(router, infra.SqlDB)
+	api.BindHuaweiAPI(router)
 
 	// launch
-	addr := "0.0.0.0:3000"
+	addr := "0.0.0.0:3001"
 	if apiConfig.Host != "" && apiConfig.Port != "" {
 		addr = fmt.Sprintf("%v:%v", apiConfig.Host, apiConfig.Port)
 	}

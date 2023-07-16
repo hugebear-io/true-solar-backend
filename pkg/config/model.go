@@ -3,6 +3,7 @@ package config
 type ApplicationConfig struct {
 	Timezone      string              `mapstructure:"timezone"`
 	API           APIConfig           `mapstructure:"api"`
+	Huawei        APIConfig           `mapstructure:"huawei"`
 	Database      DatabaseConfig      `mapstructure:"db"`
 	SNMP          SNMPConfig          `mapstructure:"snmp"`
 	Redis         RedisConfig         `mapstructure:"redis"`

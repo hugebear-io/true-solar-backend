@@ -12,12 +12,12 @@ import (
 )
 
 func BindDataCollectorConfigAPI(router *gin.RouterGroup, db *sql.DB, logger logger.Logger) {
-	alr := repo.NewAccessLogRepo(db)
-	als := service.NewAccessLogService(alr)
+	accessLogRepo := repo.NewAccessLogRepo(db)
+	accessLogService := service.NewAccessLogService(accessLogRepo)
 
 	rep := repo.NewDataCollectorConfigRepo(db)
 	serv := service.NewDataCollectorConfigService(rep)
-	hdl := handler.NewDataCollectorConfigHandler(als, serv, logger)
+	hdl := handler.NewDataCollectorConfigHandler(accessLogService, serv, logger)
 	router.Group("/configs/collectors").
 		Use(middleware.Authentication()).
 		GET("", hdl.GetAllDataCollectorConfig).
