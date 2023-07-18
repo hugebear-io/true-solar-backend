@@ -11,6 +11,10 @@ import (
 	"github.com/hugebear-io/true-solar-backend/pkg/middleware"
 )
 
+func init() {
+	config.InitConfig()
+}
+
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{

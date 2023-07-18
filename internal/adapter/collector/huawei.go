@@ -45,7 +45,7 @@ func NewHuaweiCollector(
 	usernames []string,
 	password string,
 	siteRegions []port.SiteRegionMapping,
-) *huaweiCollector {
+) port.HuaweiCollector {
 	now := time.Now()
 	return &huaweiCollector{
 		dataCollectorConfig: dataCollectorConfig,

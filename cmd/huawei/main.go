@@ -11,6 +11,10 @@ import (
 	"github.com/hugebear-io/true-solar-backend/pkg/middleware"
 )
 
+func init() {
+	config.InitConfig()
+}
+
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{
@@ -25,6 +29,8 @@ func main() {
 
 	// initialized database
 	infra.InitDatabase(l)
+	infra.InitElasticSearch(l)
+	infra.InitSNMP(l)
 
 	// api application
 	app := gin.New()
@@ -33,7 +39,7 @@ func main() {
 
 	// bind api
 	api.BindHealthCheckAPI(router)
-	api.BindHuaweiAPI(router)
+	api.BindHuaweiCollectorAPI(router)
 
 	// launch
 	addr := "0.0.0.0:3001"
