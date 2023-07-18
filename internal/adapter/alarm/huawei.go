@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
 	"github.com/hugebear-io/true-solar-backend/internal/core/port"
 	"github.com/hugebear-io/true-solar-backend/pkg/helper"
 	"github.com/hugebear-io/true-solar-backend/pkg/logger"
@@ -16,7 +15,6 @@ import (
 )
 
 type huaweiAlarm struct {
-	alarmConfig  domain.AlarmConfigService
 	rdb          *redis.Client
 	snmp         port.SNMPRepoPort
 	usernameList []string
@@ -25,7 +23,6 @@ type huaweiAlarm struct {
 }
 
 func NewHuaweiAlarm(
-	alarmConfig domain.AlarmConfigService,
 	rdb *redis.Client,
 	snmp port.SNMPRepoPort,
 	usernameList []string,
@@ -33,7 +30,6 @@ func NewHuaweiAlarm(
 	logger logger.Logger,
 ) *huaweiAlarm {
 	return &huaweiAlarm{
-		alarmConfig:  alarmConfig,
 		rdb:          rdb,
 		snmp:         snmp,
 		usernameList: usernameList,

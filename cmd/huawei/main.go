@@ -40,6 +40,7 @@ func main() {
 	// bind api
 	api.BindHealthCheckAPI(router)
 	api.BindHuaweiCollectorAPI(router)
+	api.BindHuaweiAlarmAPI(router)
 
 	// launch
 	addr := "0.0.0.0:3001"
