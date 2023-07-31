@@ -14,13 +14,6 @@ import (
 	"github.com/hugebear-io/true-solar/huawei"
 )
 
-const (
-	dateFormat      = "2006-01-02"
-	monthYearFormat = "2006-01"
-	yearFormat      = "2006"
-	monthFormat     = "01"
-)
-
 type huaweiCollector struct {
 	dataCollectorConfig domain.DataCollectorConfigService
 	siteRegionMapping   domain.SiteRegionMappingService
@@ -48,10 +41,10 @@ func NewHuaweiCollector(
 ) port.HuaweiCollector {
 	now := time.Now()
 	return &huaweiCollector{
+		brand:               strings.ToUpper(huawei.BRAND),
 		dataCollectorConfig: dataCollectorConfig,
 		siteRegionMapping:   siteRegionMapping,
 		logger:              logger,
-		brand:               strings.ToUpper(huawei.BRAND),
 		now:                 now,
 		documentCh:          documentCh,
 		errorCh:             errorCh,
@@ -121,7 +114,7 @@ func (c huaweiCollector) Run() {
 
 			for _, item := range dailyPlantData {
 				if !helper.EmptyString(item.Code) {
-					if c.now.Format(dateFormat) == time.Unix(item.CollectTime/1e3, 0).Format(dateFormat) {
+					if c.now.Format(constant.DATE_FORMAT) == time.Unix(item.CollectTime/1e3, 0).Format(constant.DATE_FORMAT) {
 						mapPlantCodeToDailyData[item.Code] = item
 					}
 				}
@@ -135,7 +128,7 @@ func (c huaweiCollector) Run() {
 
 			for _, item := range monthlyPlantData {
 				if !helper.EmptyString(item.Code) {
-					if c.now.Format(monthYearFormat) == time.Unix(item.CollectTime/1e3, 0).Format(monthYearFormat) {
+					if c.now.Format(constant.MONTH_YEAR_FORMAT) == time.Unix(item.CollectTime/1e3, 0).Format(constant.MONTH_YEAR_FORMAT) {
 						mapPlantCodeToMonthlyData[item.Code] = item
 					}
 
@@ -241,7 +234,7 @@ func (c huaweiCollector) Run() {
 
 			for _, item := range dailyDeviceData {
 				if item.ID != 0 {
-					if c.now.Format(dateFormat) == time.Unix(item.CollectTime/1e3, 0).Format(dateFormat) {
+					if c.now.Format(constant.DATE_FORMAT) == time.Unix(item.CollectTime/1e3, 0).Format(constant.DATE_FORMAT) {
 						deviceID := item.ID
 						switch deviceID := deviceID.(type) {
 						case float64:
@@ -266,7 +259,7 @@ func (c huaweiCollector) Run() {
 						parsedID := int(id)
 						mapDeviceToYearlyPower[parsedID] = mapDeviceToYearlyPower[parsedID] + item.DataItemMap.ProductPower
 
-						if c.now.Format(monthYearFormat) == time.Unix(item.CollectTime/1e3, 0).Format(monthYearFormat) {
+						if c.now.Format(constant.MONTH_YEAR_FORMAT) == time.Unix(item.CollectTime/1e3, 0).Format(constant.MONTH_YEAR_FORMAT) {
 							mapDeviceToMonthlyData[parsedID] = item
 						}
 					default:
@@ -300,9 +293,9 @@ func (c huaweiCollector) Run() {
 					for _, deviceAlarm := range mapDeviceSNToAlarm[device.SerialNumber] {
 						alarmItem := port.AlarmItem{
 							Timestamp:    c.now,
-							Month:        c.now.Format(monthFormat),
-							Year:         c.now.Format(yearFormat),
-							MonthYear:    c.now.Format(monthYearFormat),
+							Month:        c.now.Format(constant.MONTH_FORMAT),
+							Year:         c.now.Format(constant.YEAR_FORMAT),
+							MonthYear:    c.now.Format(constant.MONTH_YEAR_FORMAT),
 							VendorType:   c.brand,
 							DataType:     constant.DATA_TYPE_ALARM,
 							Area:         cityArea,
@@ -335,9 +328,9 @@ func (c huaweiCollector) Run() {
 
 				deviceItem := port.DeviceItem{
 					Timestamp:      c.now,
-					Month:          c.now.Format(monthFormat),
-					Year:           c.now.Format(yearFormat),
-					MonthYear:      c.now.Format(monthYearFormat),
+					Month:          c.now.Format(constant.MONTH_FORMAT),
+					Year:           c.now.Format(constant.YEAR_FORMAT),
+					MonthYear:      c.now.Format(constant.MONTH_YEAR_FORMAT),
 					VendorType:     c.brand,
 					DataType:       constant.DATA_TYPE_DEVICE,
 					Area:           cityArea,
@@ -394,9 +387,9 @@ func (c huaweiCollector) Run() {
 
 			plantItem := port.PlantItem{
 				Timestamp:         c.now,
-				Month:             c.now.Format(monthFormat),
-				Year:              c.now.Format(yearFormat),
-				MonthYear:         c.now.Format(monthYearFormat),
+				Month:             c.now.Format(constant.MONTH_FORMAT),
+				Year:              c.now.Format(constant.YEAR_FORMAT),
+				MonthYear:         c.now.Format(constant.MONTH_YEAR_FORMAT),
 				VendorType:        c.brand,
 				DataType:          constant.DATA_TYPE_PLANT,
 				Area:              cityArea,
