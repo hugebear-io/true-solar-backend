@@ -19,16 +19,27 @@ func NewSolarmanCollectorService(
 	dataCollectorConfig domain.DataCollectorConfigService,
 	siteRegionConfig domain.SiteRegionMappingService,
 	elastic port.ElasticSearchRepoPort,
-	logger logger.Logger,
 ) domain.SolarmanCollectorService {
+	l := logger.NewLogger(&logger.LoggerOption{
+		LogName:     "logs/solarman-collector-service.log",
+		LogSize:     1024,
+		LogAge:      90,
+		LogBackup:   1,
+		LogCompress: false,
+		LogLevel:    logger.LogLevel(logger.LOG_LEVEL_DEBUG),
+		SkipCaller:  1,
+	})
+
 	return &solarmanCollectorService{
 		dataCollectorConfig: dataCollectorConfig,
 		siteRegionConfig:    siteRegionConfig,
 		elastic:             elastic,
+		logger:              l,
 	}
 }
 
 func (s solarmanCollectorService) Run() {
+	defer s.logger.Close()
 	configs, err := s.dataCollectorConfig.GetDataCollectorConfigByVendorType(constant.VENDOR_TYPE_INVT)
 	if err != nil {
 		s.logger.Error(err)

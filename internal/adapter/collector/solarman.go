@@ -42,7 +42,7 @@ func NewSolarmanCollector(
 ) *solarmanCollector {
 	now := time.Now()
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solarman-inverter.log",
+		LogName:     "logs/solarman-collector.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -68,6 +68,8 @@ func NewSolarmanCollector(
 }
 
 func (s solarmanCollector) Run() {
+	defer s.logger.Close()
+
 	totalUsers := len(s.usernames)
 	for numUser, username := range s.usernames {
 		s.logger.Infof("COUNT USERS: %v/%v", numUser+1, totalUsers)
