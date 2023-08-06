@@ -15,6 +15,8 @@ import (
 	"github.com/hugebear-io/true-solar/solarman"
 )
 
+// bignode.invt.th@gmail.com
+// 123456*
 type solarmanAlarm struct {
 	rdb          *redis.Client
 	snmp         port.SNMPRepoPort

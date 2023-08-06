@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
 	"github.com/hugebear-io/true-solar-backend/internal/core/port"
 	"github.com/hugebear-io/true-solar-backend/pkg/constant"
 	"github.com/hugebear-io/true-solar-backend/pkg/helper"
@@ -16,52 +15,62 @@ import (
 )
 
 type solarmanCollector struct {
-	dataCollectorConfig domain.DataCollectorConfigService
-	siteRegionMapping   domain.SiteRegionMappingService
-	logger              logger.Logger
-	now                 time.Time
-	beginningOfDay      time.Time
-	documentCh          chan interface{}
-	errorCh             chan error
-	doneCh              chan bool
-	brand               string
-	usernames           []string
-	password            string
-	appID               string
-	appSecret           string
-	siteRegions         []port.SiteRegionMapping
+	logger         logger.Logger
+	now            time.Time
+	beginningOfDay time.Time
+	documentCh     chan interface{}
+	errorCh        chan error
+	doneCh         chan bool
+	brand          string
+	usernames      []string
+	password       string
+	appID          string
+	appSecret      string
+	siteRegions    []port.SiteRegionMapping
 }
 
 func NewSolarmanCollector(
-	dataCollectorConfig domain.DataCollectorConfigService,
-	siteRegionMapping domain.SiteRegionMappingService,
-	logger logger.Logger,
+	usernames []string,
+	password string,
+	appID string,
+	appSecret string,
+	siteRegions []port.SiteRegionMapping,
+	//logger logger.Logger,
 	documentCh chan interface{},
 	errorCh chan error,
 	doneCh chan bool,
-	usernames []string,
-	password string,
-	siteRegions []port.SiteRegionMapping,
 ) *solarmanCollector {
 	now := time.Now()
+	l := logger.NewLogger(&logger.LoggerOption{
+		LogName:     "logs/solarman-inverter.log",
+		LogSize:     1024,
+		LogAge:      90,
+		LogBackup:   1,
+		LogCompress: false,
+		LogLevel:    logger.LOG_LEVEL_DEBUG,
+		SkipCaller:  1,
+	})
+
 	return &solarmanCollector{
-		brand:               strings.ToUpper(solarman.BRAND),
-		dataCollectorConfig: dataCollectorConfig,
-		siteRegionMapping:   siteRegionMapping,
-		logger:              logger,
-		now:                 now,
-		beginningOfDay:      time.Date(now.Year(), now.Month(), now.Day(), 6, 0, 0, 0, now.Location()),
-		documentCh:          documentCh,
-		errorCh:             errorCh,
-		doneCh:              doneCh,
-		usernames:           usernames,
-		password:            password,
-		siteRegions:         siteRegions,
+		brand:          strings.ToUpper(solarman.BRAND),
+		logger:         l,
+		now:            now,
+		beginningOfDay: time.Date(now.Year(), now.Month(), now.Day(), 6, 0, 0, 0, now.Location()),
+		documentCh:     documentCh,
+		errorCh:        errorCh,
+		doneCh:         doneCh,
+		usernames:      usernames,
+		password:       password,
+		appID:          appID,
+		appSecret:      appSecret,
+		siteRegions:    siteRegions,
 	}
 }
 
 func (s solarmanCollector) Run() {
-	for _, username := range s.usernames {
+	totalUsers := len(s.usernames)
+	for numUser, username := range s.usernames {
+		s.logger.Infof("COUNT USERS: %v/%v", numUser+1, totalUsers)
 		inverter := solarman.NewSolarmanInverter(username, s.password, s.appID, s.appSecret, nil)
 
 		basicTokenResp, err := inverter.GetBasicToken()
@@ -81,7 +90,10 @@ func (s solarmanCollector) Run() {
 			return
 		}
 
-		for _, company := range userInfoResp.OrgInfoList {
+		totalCompany := len(userInfoResp.OrgInfoList)
+		for numCompany, company := range userInfoResp.OrgInfoList {
+			s.logger.Infof("COUNT COMPANY: %v/%v", numCompany+1, totalCompany)
+
 			businessTokenResp, err := inverter.GetBusinessToken(company.CompanyID)
 			if err != nil {
 				s.errorCh <- err
@@ -100,7 +112,10 @@ func (s solarmanCollector) Run() {
 				return
 			}
 
-			for _, plant := range plantList {
+			totalPlants := len(plantList)
+			for numPlant, plant := range plantList {
+				s.logger.Infof("COUNT PLANT: %v/%v", numPlant+1, totalPlants)
+
 				stationID := plant.ID
 				plantID, _ := helper.ParsePlantID(plant.Name)
 				cityName, cityCode, cityArea := helper.ParseSiteID(s.siteRegions, plantID.SiteID)
@@ -192,7 +207,10 @@ func (s solarmanCollector) Run() {
 				}
 
 				deviceStatusArray := make([]string, 0)
-				for _, device := range deviceListResp {
+				totalDevices := len(deviceListResp)
+				for numDevice, device := range deviceListResp {
+					s.logger.Infof("COUNT DEVICE: %v/%v", numDevice+1, totalDevices)
+
 					deviceSN := device.DeviceSN
 					deviceID := device.DeviceID
 
@@ -393,4 +411,5 @@ func (s solarmanCollector) Run() {
 			}
 		}
 	}
+	s.doneCh <- true
 }
