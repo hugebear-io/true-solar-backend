@@ -35,9 +35,19 @@ func NewSolarmanAlarm(
 	password string,
 	appID string,
 	appSecret string,
-	logger logger.Logger,
 ) *solarmanAlarm {
 	const brand = "INVT-Ipanda"
+
+	l := logger.NewLogger(&logger.LoggerOption{
+		LogName:     "logs/solarman-alarm.log",
+		LogSize:     1024,
+		LogAge:      90,
+		LogBackup:   1,
+		LogCompress: false,
+		LogLevel:    logger.LogLevel(logger.LOG_LEVEL_DEBUG),
+		SkipCaller:  1,
+	})
+
 	return &solarmanAlarm{
 		brand:        brand,
 		rdb:          rdb,
@@ -45,8 +55,8 @@ func NewSolarmanAlarm(
 		usernameList: usernameList,
 		password:     password,
 		appID:        appID,
+		logger:       l,
 		appSecret:    appSecret,
-		logger:       logger,
 	}
 }
 
@@ -84,6 +94,10 @@ func (r solarmanAlarm) Run() error {
 
 			token := businessTokenResp.AccessToken
 			plantList, err := inverter.GetPlantList(token)
+			if err != nil {
+				return err
+			}
+
 			for _, plant := range plantList {
 				plantID := plant.ID
 				plantName := plant.Name

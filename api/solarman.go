@@ -6,26 +6,28 @@ import (
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/repo"
 	"github.com/hugebear-io/true-solar-backend/internal/core/service"
 	"github.com/hugebear-io/true-solar-backend/internal/infra"
-	"github.com/hugebear-io/true-solar-backend/pkg/config"
 )
 
-func BindSolarmanCollectorAPI(api *gin.RouterGroup) {
-	elasticConfig := config.Config.ElasticSearch
-	elastic := repo.NewElasticSearchRepo(infra.ElasticSearch, elasticConfig.Index)
-
+func BindSolarmanAPI(api *gin.RouterGroup) {
 	siteRegionMappingRepo := repo.NewSiteRegionMappingRepo(infra.SqlDB)
 	siteRegionMapping := service.NewSiteRegionMappingService(siteRegionMappingRepo)
 
 	dataCollectorConfigRepo := repo.NewDataCollectorConfigRepo(infra.SqlDB)
 	dataCollectorConfig := service.NewDataCollectorConfigService(dataCollectorConfigRepo)
 
-	serv := service.NewSolarmanCollectorService(
+	alarmConfigRepo := repo.NewAlarmConfigRepo(infra.SqlDB)
+	alarmConfig := service.NewAlarmConfigService(alarmConfigRepo)
+
+	collectorServ := service.NewSolarmanCollectorService(
 		dataCollectorConfig,
 		siteRegionMapping,
-		elastic,
 	)
+	collectorHdl := handler.NewSolarmanCollectorHandler(collectorServ)
 
-	hdl := handler.NewSolarmanCollectorHandler(serv)
-	sub := api.Group("/collector")
-	sub.GET("", hdl.Run)
+	alarmServ := service.NewSolarmanAlarmService(alarmConfig)
+	alarmHdl := handler.NewSolarmanAlarmHandler(alarmServ)
+
+	sub := api.Group("")
+	sub.GET("/collector", collectorHdl.Run)
+	sub.GET("/alarm", alarmHdl.Run)
 }

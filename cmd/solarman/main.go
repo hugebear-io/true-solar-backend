@@ -18,7 +18,7 @@ func init() {
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solarman-api.log",
+		LogName:     "logs/solarman-instance.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -29,17 +29,16 @@ func main() {
 
 	// initialized database
 	infra.InitDatabase(l)
-	infra.InitElasticSearch(l)
-	infra.InitSNMP(l)
 
 	// api application
 	app := gin.New()
 	app.Use(middleware.CORS())
+	app.Use(gin.Recovery())
 	router := app.Group("/api")
 
 	// bind api
 	api.BindHealthCheckAPI(router)
-	api.BindSolarmanCollectorAPI(router)
+	api.BindSolarmanAPI(router)
 
 	// launch
 	addr := "0.0.0.0:3001"

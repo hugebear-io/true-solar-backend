@@ -18,7 +18,7 @@ func init() {
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/huawei-inverter.log",
+		LogName:     "logs/huawei-service.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -29,8 +29,6 @@ func main() {
 
 	// initialized database
 	infra.InitDatabase(l)
-	infra.InitElasticSearch(l)
-	infra.InitSNMP(l)
 
 	// api application
 	app := gin.New()

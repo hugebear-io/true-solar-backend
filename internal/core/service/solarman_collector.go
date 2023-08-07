@@ -2,8 +2,11 @@ package service
 
 import (
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/collector"
+	"github.com/hugebear-io/true-solar-backend/internal/adapter/repo"
 	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
 	"github.com/hugebear-io/true-solar-backend/internal/core/port"
+	"github.com/hugebear-io/true-solar-backend/internal/infra"
+	"github.com/hugebear-io/true-solar-backend/pkg/config"
 	"github.com/hugebear-io/true-solar-backend/pkg/constant"
 	"github.com/hugebear-io/true-solar-backend/pkg/logger"
 )
@@ -11,17 +14,16 @@ import (
 type solarmanCollectorService struct {
 	dataCollectorConfig domain.DataCollectorConfigService
 	siteRegionConfig    domain.SiteRegionMappingService
-	elastic             port.ElasticSearchRepoPort
 	logger              logger.Logger
 }
 
+// TODO: REFACTOR
 func NewSolarmanCollectorService(
 	dataCollectorConfig domain.DataCollectorConfigService,
 	siteRegionConfig domain.SiteRegionMappingService,
-	elastic port.ElasticSearchRepoPort,
 ) domain.SolarmanCollectorService {
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solarman-collector-service.log",
+		LogName:     "logs/solarman-collector.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -33,13 +35,17 @@ func NewSolarmanCollectorService(
 	return &solarmanCollectorService{
 		dataCollectorConfig: dataCollectorConfig,
 		siteRegionConfig:    siteRegionConfig,
-		elastic:             elastic,
 		logger:              l,
 	}
 }
 
 func (s solarmanCollectorService) Run() {
-	defer s.logger.Close()
+	defer s.Close()
+
+	elasticConfig := config.Config.ElasticSearch
+	elasticClient := infra.NewElasticSearch(s.logger)
+	elastic := repo.NewElasticSearchRepo(elasticClient, elasticConfig.Index)
+
 	configs, err := s.dataCollectorConfig.GetDataCollectorConfigByVendorType(constant.VENDOR_TYPE_INVT)
 	if err != nil {
 		s.logger.Error(err)
@@ -102,13 +108,17 @@ DONE:
 		}
 	}
 
-	if err := s.elastic.BulkIndex(documents); err != nil {
+	if err := elastic.BulkIndex(documents); err != nil {
 		s.logger.Error(err)
 		return
 	}
 
-	if err := s.elastic.UpsertSiteStation(siteDocuments); err != nil {
+	if err := elastic.UpsertSiteStation(siteDocuments); err != nil {
 		s.logger.Error(err)
 		return
 	}
+}
+
+func (s *solarmanCollectorService) Close() {
+	s.logger.Close()
 }

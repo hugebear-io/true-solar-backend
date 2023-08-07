@@ -23,10 +23,11 @@ func BindHuaweiAlarmAPI(api *gin.RouterGroup) {
 	})
 
 	rdb := infra.NewRedis(l)
+	snmpClient := infra.NewSNMP(l)
 	alarmConfigRepo := repo.NewAlarmConfigRepo(infra.SqlDB)
 	alarmConfig := service.NewAlarmConfigService(alarmConfigRepo)
 
-	snmp := repo.NewSNMPRepo(infra.SNMP, cfg.SNMP.AgentHost)
+	snmp := repo.NewSNMPRepo(snmpClient, cfg.SNMP.AgentHost)
 	serv := service.NewHuaweiAlarmService(alarmConfig, rdb, snmp, l)
 	hdl := handler.NewHuaweiAlarmHandler(serv)
 

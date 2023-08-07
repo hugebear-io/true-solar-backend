@@ -24,7 +24,8 @@ func BindHuaweiCollectorAPI(api *gin.RouterGroup) {
 		SkipCaller:  1,
 	})
 
-	elastic := repo.NewElasticSearchRepo(infra.ElasticSearch, elasticConfig.Index)
+	elasticSearch := infra.NewElasticSearch(l)
+	elastic := repo.NewElasticSearchRepo(elasticSearch, elasticConfig.Index)
 
 	siteRegionMappingRepo := repo.NewSiteRegionMappingRepo(infra.SqlDB)
 	siteRegionMapping := service.NewSiteRegionMappingService(siteRegionMappingRepo)

@@ -37,10 +37,7 @@ type ElasticSearchConfig struct {
 }
 
 type RedisConfig struct {
-	Addr     string `mapstructure:"addr"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DB       int    `mapstructure:"db"`
+	URI string `mapstructure:"uri"`
 }
 
 type LoggerConfig struct {

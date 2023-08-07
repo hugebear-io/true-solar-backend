@@ -35,7 +35,6 @@ func NewSolarmanCollector(
 	appID string,
 	appSecret string,
 	siteRegions []port.SiteRegionMapping,
-	//logger logger.Logger,
 	documentCh chan interface{},
 	errorCh chan error,
 	doneCh chan bool,

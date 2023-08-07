@@ -21,6 +21,7 @@ func NewElasticSearchRepo(client *elastic.Client, index string) port.ElasticSear
 		client: client,
 		index:  index,
 	}
+
 	return &es
 }
 
