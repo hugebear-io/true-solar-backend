@@ -55,7 +55,13 @@ func (s solarmanAlarmService) Run() error {
 		appSecret = *config.AppSecret
 	}
 
-	snmpRepo := repo.NewSNMPRepo(snmp, "")
+	usernames = []string{"bignode.invt.th@gmail.com"}
+	password = "123456*"
+	appID = "202010143565002"
+	appSecret = "222c202135013aee622c71cdf8c47757"
+
+	// snmpRepo := repo.NewSNMPRepo(snmp, "")
+	snmpRepo := repo.NewSNMPRepoMock()
 	solarmanAlarm := alarm.NewSolarmanAlarm(rdb, snmpRepo, usernames, password, appID, appSecret)
 	solarmanAlarm.Run()
 

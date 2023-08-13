@@ -61,15 +61,19 @@ func NewSolarmanAlarm(
 }
 
 func (r solarmanAlarm) Run() error {
+	defer r.logger.Close()
 	ctx := context.Background()
 	now := time.Now()
 	beginTime := time.Date(now.Year(), now.Month(), now.Day(), 6, 0, 0, 0, now.Location()) // 06:00 AM
 
-	for _, username := range r.usernameList {
-		inverter := solarman.NewSolarmanInverter(username, r.password, r.appID, r.appSecret, nil)
+	totalUser := len(r.usernameList)
+	for numUser, username := range r.usernameList {
+		r.logger.Infof("User Count: %d/%d", numUser+1, totalUser)
 
+		inverter := solarman.NewSolarmanInverter(username, r.password, r.appID, r.appSecret, nil)
 		basicTokenResp, err := inverter.GetBasicToken()
 		if err != nil {
+			r.logger.Error(err)
 			return err
 		}
 
@@ -79,12 +83,17 @@ func (r solarmanAlarm) Run() error {
 
 		userInfoResp, err := inverter.GetUserInfo()
 		if err != nil {
+			r.logger.Error(err)
 			return err
 		}
 
-		for _, company := range userInfoResp.OrgInfoList {
+		totalCompany := len(userInfoResp.OrgInfoList)
+		for numCompany, company := range userInfoResp.OrgInfoList {
+			r.logger.Infof("Company Count: %d/%d", numCompany+1, totalCompany)
+
 			businessTokenResp, err := inverter.GetBusinessToken(company.CompanyID)
 			if err != nil {
+				r.logger.Error(err)
 				return err
 			}
 
@@ -98,16 +107,23 @@ func (r solarmanAlarm) Run() error {
 				return err
 			}
 
-			for _, plant := range plantList {
+			totalPlant := len(plantList)
+			for numPlant, plant := range plantList {
+				r.logger.Infof("Plant Count: %d/%d", numPlant+1, totalPlant)
+
 				plantID := plant.ID
 				plantName := plant.Name
 
 				deviceList, err := inverter.GetPlantDeviceList(token, plantID)
 				if err != nil {
+					r.logger.Error(err)
 					return err
 				}
 
-				for _, device := range deviceList {
+				totalDevice := len(deviceList)
+				for numDevice, device := range deviceList {
+					r.logger.Infof("Device Count: %d/%d", numDevice+1, totalDevice)
+
 					deviceID := device.DeviceID
 					deviceSN := device.DeviceSN
 					deviceType := device.DeviceType
@@ -120,6 +136,7 @@ func (r solarmanAlarm) Run() error {
 						val := fmt.Sprintf("%s,%s", plantName, deviceCollectionTimeStr)
 						err := r.rdb.Set(ctx, key, val, 0).Err()
 						if err != nil {
+							r.logger.Error(err)
 							return err
 						}
 
@@ -129,6 +146,7 @@ func (r solarmanAlarm) Run() error {
 						severity := "5"
 						err = r.snmp.SendAlarmTrap(name, alert, desc, severity, deviceCollectionTimeStr)
 						if err != nil {
+							r.logger.Error(err)
 							return err
 						}
 					case 1:
@@ -139,6 +157,7 @@ func (r solarmanAlarm) Run() error {
 							key := fmt.Sprintf("%s,%d,%s,%s,%d,*", r.brand, plantID, deviceType, deviceSN, deviceID)
 							scanKeys, cursor, err = r.rdb.Scan(ctx, cursor, key, 10).Result()
 							if err != nil {
+								r.logger.Error(err)
 								return err
 							}
 
@@ -155,6 +174,7 @@ func (r solarmanAlarm) Run() error {
 							}
 
 							if err != nil {
+								r.logger.Error(err)
 								return err
 							}
 
@@ -169,18 +189,21 @@ func (r solarmanAlarm) Run() error {
 
 								err := r.snmp.SendAlarmTrap(name, alert, desc, severity, splitVal[1])
 								if err != nil {
+									r.logger.Error(err)
 									return err
 								}
 							}
 
 							err = r.rdb.Del(ctx, key).Err()
 							if err != nil {
+								r.logger.Error(err)
 								return err
 							}
 						}
 					case 2:
 						alertList, err := inverter.GetDeviceAlertList(token, deviceSN, beginTime.Unix(), now.Unix())
 						if err != nil {
+							r.logger.Error(err)
 							return err
 						}
 
@@ -194,6 +217,7 @@ func (r solarmanAlarm) Run() error {
 								val := fmt.Sprintf("%s,%s", plantName, alertTimeStr)
 								err := r.rdb.Set(ctx, key, val, 0).Err()
 								if err != nil {
+									r.logger.Error(err)
 									return err
 								}
 
@@ -204,6 +228,7 @@ func (r solarmanAlarm) Run() error {
 
 								err = r.snmp.SendAlarmTrap(name, alert, desc, severity, alertTimeStr)
 								if err != nil {
+									r.logger.Error(err)
 									return err
 								}
 							}
@@ -214,5 +239,7 @@ func (r solarmanAlarm) Run() error {
 			}
 		}
 	}
+
+	r.logger.Info("Alarm Done")
 	return nil
 }
