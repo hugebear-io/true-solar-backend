@@ -4,6 +4,7 @@ type ApplicationConfig struct {
 	Timezone      string              `mapstructure:"timezone"`
 	API           APIConfig           `mapstructure:"api"`
 	Huawei        APIConfig           `mapstructure:"huawei"`
+	Solarman      APIConfig           `mapstructure:"solarman"`
 	Database      DatabaseConfig      `mapstructure:"db"`
 	SNMP          SNMPConfig          `mapstructure:"snmp"`
 	Redis         RedisConfig         `mapstructure:"redis"`

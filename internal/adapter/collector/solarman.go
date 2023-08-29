@@ -76,17 +76,20 @@ func (s solarmanCollector) Run() {
 
 		basicTokenResp, err := inverter.GetBasicToken()
 		if err != nil {
+			s.logger.Error(err)
 			s.errorCh <- err
 			return
 		}
 
 		if helper.EmptyString(basicTokenResp.AccessToken) {
+			s.logger.Error(err)
 			s.errorCh <- errors.New("access token is empty")
 			return
 		}
 
 		userInfoResp, err := inverter.GetUserInfo()
 		if err != nil {
+			s.logger.Error(err)
 			s.errorCh <- err
 			return
 		}
@@ -97,18 +100,22 @@ func (s solarmanCollector) Run() {
 
 			businessTokenResp, err := inverter.GetBusinessToken(company.CompanyID)
 			if err != nil {
+				s.logger.Error(err)
 				s.errorCh <- err
 				return
 			}
 
 			if helper.EmptyString(businessTokenResp.AccessToken) {
-				s.errorCh <- errors.New("access token is empty")
+				err := errors.New("access token is empty")
+				s.logger.Error(err)
+				s.errorCh <- err
 				return
 			}
 
 			token := businessTokenResp.AccessToken
 			plantList, err := inverter.GetPlantList(token)
 			if err != nil {
+				s.logger.Error(err)
 				s.errorCh <- err
 				return
 			}
@@ -203,6 +210,7 @@ func (s solarmanCollector) Run() {
 
 				deviceListResp, err := inverter.GetPlantDeviceList(token, stationID)
 				if err != nil {
+					s.logger.Error(err)
 					s.errorCh <- err
 					return
 				}

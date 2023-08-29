@@ -23,7 +23,7 @@ func NewSolarmanCollectorService(
 	siteRegionConfig domain.SiteRegionMappingService,
 ) domain.SolarmanCollectorService {
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solarman-collector.log",
+		LogName:     "logs/solarman-collector-service.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,

@@ -16,7 +16,7 @@ func init() {
 }
 
 func main() {
-	apiConfig := config.Config.API
+	apiConfig := config.Config.Solarman
 	l := logger.NewLogger(&logger.LoggerOption{
 		LogName:     "logs/solarman-instance.log",
 		LogSize:     1024,
@@ -41,7 +41,7 @@ func main() {
 	api.BindSolarmanAPI(router)
 
 	// launch
-	addr := "0.0.0.0:3001"
+	addr := "0.0.0.0:3002"
 	if apiConfig.Host != "" && apiConfig.Port != "" {
 		addr = fmt.Sprintf("%v:%v", apiConfig.Host, apiConfig.Port)
 	}

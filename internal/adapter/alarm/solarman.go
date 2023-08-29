@@ -78,7 +78,9 @@ func (r solarmanAlarm) Run() error {
 		}
 
 		if helper.EmptyString(basicTokenResp.AccessToken) {
-			return errors.New("access token is empty")
+			err := errors.New("access token is empty")
+			r.logger.Error(err)
+			return err
 		}
 
 		userInfoResp, err := inverter.GetUserInfo()
@@ -98,12 +100,15 @@ func (r solarmanAlarm) Run() error {
 			}
 
 			if helper.EmptyString(businessTokenResp.AccessToken) {
-				return errors.New("access token is empty")
+				err := errors.New("access token is empty")
+				r.logger.Error(err)
+				return err
 			}
 
 			token := businessTokenResp.AccessToken
 			plantList, err := inverter.GetPlantList(token)
 			if err != nil {
+				r.logger.Error(err)
 				return err
 			}
 

@@ -29,7 +29,7 @@ func NewSNMP(logger logger.Logger) *gosnmp.GoSNMP {
 	}
 
 	if err := SNMP.Connect(); err != nil {
-		logger.Fatal(err)
+		logger.Panic(err)
 		return nil
 	}
 

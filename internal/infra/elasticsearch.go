@@ -48,7 +48,7 @@ func NewElasticSearch(logger logger.Logger) *elastic.Client {
 	)
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.Panic(err)
 		return nil
 	}
 

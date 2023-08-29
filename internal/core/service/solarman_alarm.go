@@ -5,6 +5,7 @@ import (
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/repo"
 	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
 	"github.com/hugebear-io/true-solar-backend/internal/infra"
+	"github.com/hugebear-io/true-solar-backend/pkg/config"
 	"github.com/hugebear-io/true-solar-backend/pkg/constant"
 	"github.com/hugebear-io/true-solar-backend/pkg/logger"
 )
@@ -16,7 +17,7 @@ type solarmanAlarmService struct {
 
 func NewSolarmanAlarmService(alarmConfig domain.AlarmConfigService) domain.SolarmanAlarmService {
 	l := logger.NewLogger(&logger.LoggerOption{
-		LogName:     "logs/solarman-alarm.log",
+		LogName:     "logs/solarman-alarm-service.log",
 		LogSize:     1024,
 		LogAge:      90,
 		LogBackup:   1,
@@ -32,6 +33,7 @@ func NewSolarmanAlarmService(alarmConfig domain.AlarmConfigService) domain.Solar
 }
 
 func (s solarmanAlarmService) Run() error {
+	snmpCfg := config.Config.SNMP
 	rdb := infra.NewRedis(s.logger)
 	snmp := infra.NewSNMP(s.logger)
 
@@ -60,8 +62,8 @@ func (s solarmanAlarmService) Run() error {
 	appID = "202010143565002"
 	appSecret = "222c202135013aee622c71cdf8c47757"
 
-	// snmpRepo := repo.NewSNMPRepo(snmp, "")
-	snmpRepo := repo.NewSNMPRepoMock()
+	snmpRepo := repo.NewSNMPRepo(snmp, snmpCfg.AgentHost)
+	// snmpRepo := repo.NewSNMPRepoMock()
 	solarmanAlarm := alarm.NewSolarmanAlarm(rdb, snmpRepo, usernames, password, appID, appSecret)
 	solarmanAlarm.Run()
 

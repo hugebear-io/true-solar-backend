@@ -16,7 +16,7 @@ func init() {
 }
 
 func main() {
-	apiConfig := config.Config.API
+	apiConfig := config.Config.Huawei
 	l := logger.NewLogger(&logger.LoggerOption{
 		LogName:     "logs/huawei-service.log",
 		LogSize:     1024,
