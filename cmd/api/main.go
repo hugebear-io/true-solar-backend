@@ -11,6 +11,10 @@ import (
 	"github.com/hugebear-io/true-solar-backend/pkg/middleware"
 )
 
+func init() {
+	config.InitConfig()
+}
+
 func main() {
 	apiConfig := config.Config.API
 	l := logger.NewLogger(&logger.LoggerOption{
@@ -22,11 +26,9 @@ func main() {
 		LogLevel:    logger.LogLevel(apiConfig.LogLevel),
 		SkipCaller:  1,
 	})
-	defer l.Close()
 
 	// initialized database
 	infra.InitDatabase(l)
-	defer infra.SqlDB.Close()
 
 	// api application
 	app := gin.New()

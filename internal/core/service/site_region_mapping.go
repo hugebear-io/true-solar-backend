@@ -48,8 +48,8 @@ func (s siteRegionMappingService) GetRegion() (domain.Regions, error) {
 
 	mapAreaCities := make(map[string][]port.SiteRegionMapping)
 	for _, site := range siteRegionMapping {
-		if site.Area != "" {
-			mapAreaCities[site.Area] = append(mapAreaCities[site.Area], site)
+		if site.Area != nil {
+			mapAreaCities[*site.Area] = append(mapAreaCities[*site.Area], site)
 		}
 	}
 
@@ -59,7 +59,7 @@ func (s siteRegionMappingService) GetRegion() (domain.Regions, error) {
 	}
 
 	for _, site := range areaNullCity {
-		mapAreaCities[site.Area] = append(mapAreaCities[site.Area], site)
+		mapAreaCities[*site.Area] = append(mapAreaCities[*site.Area], site)
 	}
 
 	var region domain.Regions
@@ -169,7 +169,7 @@ func (s siteRegionMappingService) ImportBMASiteRegionMapping(fileLocation string
 			siteRegionMappings = append(siteRegionMappings, port.SiteRegionMapping{
 				Code: siteID,
 				Name: "กรุงเทพมหานคร",
-				Area: area,
+				Area: &area,
 			})
 		}
 	}

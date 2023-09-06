@@ -15,7 +15,7 @@ func InitDatabase(logger logger.Logger) {
 	var err error
 	SqlDB, err = sql.Open("sqlite3", cfg.DSN)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Panic(err)
 	}
 
 	logger.Info("Initial Database")

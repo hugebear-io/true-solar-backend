@@ -19,7 +19,7 @@ type SiteRegionMapping struct {
 	ID        int       `json:"id"`
 	Code      string    `json:"code" binding:"required"`
 	Name      string    `json:"name" binding:"required"`
-	Area      string    `json:"area"`
+	Area      *string   `json:"area"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

@@ -12,11 +12,9 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-var ElasticSearch *elastic.Client
-
 var httpsRegexp = regexp.MustCompile("^https")
 
-func InitElasticSearch(logger logger.Logger) {
+func NewElasticSearch(logger logger.Logger) *elastic.Client {
 	cfg := config.Config.ElasticSearch
 	logger.Debugf("%v", cfg)
 
@@ -40,7 +38,7 @@ func InitElasticSearch(logger logger.Logger) {
 	}
 
 	var err error
-	ElasticSearch, err = elastic.NewClient(
+	elastic, err := elastic.NewClient(
 		elastic.SetURL(cfg.Host),
 		elastic.SetScheme(scheme),
 		elastic.SetBasicAuth(cfg.Username, cfg.Password),
@@ -50,8 +48,10 @@ func InitElasticSearch(logger logger.Logger) {
 	)
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.Panic(err)
+		return nil
 	}
 
 	logger.Info("Initialized Elastic Search")
+	return elastic
 }

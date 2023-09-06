@@ -11,18 +11,14 @@ import (
 func NewRedis(logger logger.Logger) *redis.Client {
 	ctx := context.Background()
 	cfg := config.Config.Redis
-	options := redis.Options{
-		Addr:     cfg.Addr,
-		Username: cfg.User,
-		Password: cfg.Password,
-		DB:       cfg.DB,
-	}
-	client := redis.NewClient(&options)
+	addr, _ := redis.ParseURL(cfg.URI)
+	client := redis.NewClient(addr)
 
 	_, err := client.Ping(ctx).Result()
 	if err != nil {
 		logger.Panicf("NewRedis(): %v", err)
 	}
 
+	logger.Infof("NewRedis(): connected to %s", cfg.URI)
 	return client
 }

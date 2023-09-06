@@ -9,9 +9,7 @@ import (
 	"github.com/hugebear-io/true-solar-backend/pkg/logger"
 )
 
-var SNMP *gosnmp.GoSNMP
-
-func InitSNMP(logger logger.Logger) {
+func NewSNMP(logger logger.Logger) *gosnmp.GoSNMP {
 	cfg := config.Config.SNMP
 	port, err := strconv.Atoi(cfg.TargetPort)
 	if err != nil {
@@ -31,7 +29,10 @@ func InitSNMP(logger logger.Logger) {
 	}
 
 	if err := SNMP.Connect(); err != nil {
-		logger.Fatal(err)
+		logger.Panic(err)
+		return nil
 	}
+
 	logger.Info("Initialized SNMP")
+	return SNMP
 }

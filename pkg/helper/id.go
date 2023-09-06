@@ -223,7 +223,7 @@ func ParseSiteID(siteRegions []port.SiteRegionMapping, siteID string) (cityName 
 	// Whole site id, e.g. BKK00001
 	for _, siteRegion := range siteRegions {
 		if strings.ToUpper(siteRegion.Code) == upperedSiteID {
-			return siteRegion.Name, siteRegion.Code, siteRegion.Area
+			return siteRegion.Name, siteRegion.Code, *siteRegion.Area
 		}
 	}
 
@@ -232,7 +232,7 @@ func ParseSiteID(siteRegions []port.SiteRegionMapping, siteID string) (cityName 
 		codeStr := strings.ToUpper(string(code))
 		for _, siteRegion := range siteRegions {
 			if strings.ToUpper(siteRegion.Code) == codeStr {
-				return siteRegion.Name, siteRegion.Code, siteRegion.Area
+				return siteRegion.Name, siteRegion.Code, *siteRegion.Area
 			}
 		}
 	}

@@ -3,6 +3,8 @@ package config
 type ApplicationConfig struct {
 	Timezone      string              `mapstructure:"timezone"`
 	API           APIConfig           `mapstructure:"api"`
+	Huawei        APIConfig           `mapstructure:"huawei"`
+	Solarman      APIConfig           `mapstructure:"solarman"`
 	Database      DatabaseConfig      `mapstructure:"db"`
 	SNMP          SNMPConfig          `mapstructure:"snmp"`
 	Redis         RedisConfig         `mapstructure:"redis"`
@@ -36,10 +38,7 @@ type ElasticSearchConfig struct {
 }
 
 type RedisConfig struct {
-	Addr     string `mapstructure:"addr"`
-	User     string `mapstructure:"user"`
-	Password string `mapstructure:"password"`
-	DB       int    `mapstructure:"db"`
+	URI string `mapstructure:"uri"`
 }
 
 type LoggerConfig struct {

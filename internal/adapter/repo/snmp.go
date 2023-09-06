@@ -59,3 +59,7 @@ func (r snmpRepo) SendAlarmTrap(deviceName string, alertName string, description
 
 	return nil
 }
+
+func (r *snmpRepo) Close() {
+	r.client.Conn.Close()
+}
