@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/collector"
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/repo"
 	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
@@ -69,10 +71,10 @@ func (s solarmanCollectorService) Run() {
 		return
 	}
 
-	usernames = []string{"bignode.invt.th@gmail.com"}
-	password = "123456*"
-	appID = "202010143565002"
-	appSecret = "222c202135013aee622c71cdf8c47757"
+	// usernames = []string{"bignode.invt.th@gmail.com"}
+	// password = "123456*"
+	// appID = "202010143565002"
+	// appSecret = "222c202135013aee622c71cdf8c47757"
 
 	documents := make([]interface{}, 0)
 	siteDocuments := make([]port.SiteItem, 0)
@@ -91,6 +93,8 @@ DONE:
 			s.logger.Error(err)
 		case doc := <-documentCh:
 			documents = append(documents, doc)
+			fmt.Printf("%#v\n", doc)
+
 			if item, ok := doc.(port.PlantItem); ok {
 				tmp := port.SiteItem{
 					Timestamp:   &item.Timestamp,
