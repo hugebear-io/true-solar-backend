@@ -14,8 +14,10 @@ require (
 	github.com/hugebear-io/true-solar v0.0.1
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/olivere/elastic/v7 v7.0.32
+	github.com/openlyinc/pointy v1.2.0
 	github.com/spf13/viper v1.16.0
 	github.com/xuri/excelize/v2 v2.7.1
+	go.openly.dev/pointy v1.3.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.9.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -54,7 +56,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/openlyinc/pointy v1.2.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
