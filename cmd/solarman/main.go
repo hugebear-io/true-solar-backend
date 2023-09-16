@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hugebear-io/true-solar-backend/api"
@@ -12,6 +13,8 @@ import (
 )
 
 func init() {
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+	time.Local = loc
 	config.InitConfig()
 }
 
