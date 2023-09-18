@@ -299,9 +299,9 @@ func (es elasticSearchRepo) QueryPerformanceOK(duration int, EfficiencyFactor fl
 					"focus_hour":           FocusHour,
 					"threshold_percentage": thresholdPercentage,
 				}))).
-		SubAggregation("over_threshold", elastic.NewBucketSelectorAggregation().
+		SubAggregation("above_threshold", elastic.NewBucketSelectorAggregation().
 			BucketsPathsMap(map[string]string{"threshold": "threshold_percentage", "daily": "max_daily"}).
-			Script(elastic.NewScript("params.daily > params.threshold"))).
+			Script(elastic.NewScript("params.daily >= params.threshold"))).
 		SubAggregation("hits", elastic.NewTopHitsAggregation().
 			Size(1).
 			FetchSourceContext(

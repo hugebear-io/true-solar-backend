@@ -18,10 +18,10 @@ func main() {
 	l := logger.NewLoggerMock()
 	elastic := infra.NewElasticSearch(l)
 	repo := repo.NewElasticSearchRepo(elastic, "solarcell")
-	data, err := repo.QueryPerformanceLow(30, 60, 24, 0.3)
+	data, err := repo.QueryPerformanceOK(100, 0, 24, 0.1)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(*data[0])
+	fmt.Println(data)
 }
