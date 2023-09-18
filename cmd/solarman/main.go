@@ -45,6 +45,8 @@ func main() {
 	cron.Cron("*/15 7-18 * * *").Do(alarm.RunJob)
 	cron.StartAsync()
 
+	l.Info("Start Cronjob")
+
 	// api application
 	app := gin.New()
 	app.Use(middleware.CORS())
