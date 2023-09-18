@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/collector"
 	"github.com/hugebear-io/true-solar-backend/internal/adapter/repo"
 	"github.com/hugebear-io/true-solar-backend/internal/core/domain"
@@ -93,7 +91,6 @@ DONE:
 			s.logger.Error(err)
 		case doc := <-documentCh:
 			documents = append(documents, doc)
-			fmt.Printf("%#v\n", doc)
 
 			if item, ok := doc.(port.PlantItem); ok {
 				tmp := port.SiteItem{

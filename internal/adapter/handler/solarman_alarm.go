@@ -6,15 +6,19 @@ import (
 	"github.com/hugebear-io/true-solar-backend/pkg/deliver"
 )
 
-type solarmanAlarmHandler struct {
+type SolarmanAlarmHandler struct {
 	serv domain.SolarmanAlarmService
 }
 
-func NewSolarmanAlarmHandler(serv domain.SolarmanAlarmService) *solarmanAlarmHandler {
-	return &solarmanAlarmHandler{serv: serv}
+func NewSolarmanAlarmHandler(serv domain.SolarmanAlarmService) *SolarmanAlarmHandler {
+	return &SolarmanAlarmHandler{serv: serv}
 }
 
-func (h solarmanAlarmHandler) Run(c *gin.Context) {
+func (h SolarmanAlarmHandler) Run(c *gin.Context) {
 	deliver.ResponseOK(c, nil)
+	go h.serv.Run()
+}
+
+func (h SolarmanAlarmHandler) RunJob() {
 	go h.serv.Run()
 }
