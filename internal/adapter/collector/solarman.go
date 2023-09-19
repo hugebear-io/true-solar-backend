@@ -68,6 +68,13 @@ func NewSolarmanCollector(
 
 func (s solarmanCollector) Run() {
 	defer s.logger.Close()
+	defer func() {
+		if r := recover(); r != nil {
+			s.logger.Errorf("panic: %v", r)
+			s.errorCh <- fmt.Errorf("panic: %v", r)
+			return
+		}
+	}()
 
 	totalUsers := len(s.usernames)
 	for numUser, username := range s.usernames {
