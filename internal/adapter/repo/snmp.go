@@ -3,15 +3,27 @@ package repo
 import (
 	"github.com/gosnmp/gosnmp"
 	"github.com/hugebear-io/true-solar-backend/internal/core/port"
+	"github.com/hugebear-io/true-solar-backend/pkg/logger"
 )
 
 type snmpRepo struct {
 	client    *gosnmp.GoSNMP
 	agentHost string
+	logger    logger.Logger
 }
 
 func NewSNMPRepo(client *gosnmp.GoSNMP, agentHost string) port.SNMPRepoPort {
-	return &snmpRepo{client: client, agentHost: agentHost}
+	l := logger.NewLogger(&logger.LoggerOption{
+		LogName:     "logs/snmp.log",
+		LogSize:     1024,
+		LogAge:      90,
+		LogBackup:   1,
+		LogCompress: false,
+		LogLevel:    logger.LogLevel(logger.LOG_LEVEL_DEBUG),
+		SkipCaller:  1,
+	})
+
+	return &snmpRepo{client: client, agentHost: agentHost, logger: l}
 }
 
 func (r snmpRepo) SendAlarmTrap(deviceName string, alertName string, description string, severity string, lastedUpdateTime string) error {
@@ -53,10 +65,14 @@ func (r snmpRepo) SendAlarmTrap(deviceName string, alertName string, description
 		Variables:    []gosnmp.SnmpPDU{pduClass, pduName, pduAlert, pduDesc, pduSeverity, pduLastedUpdateTime},
 	}
 
-	if _, err := r.client.SendTrap(trap); err != nil {
+	result, err := r.client.SendTrap(trap)
+	if err != nil {
+		r.logger.Error(err)
 		return err
 	}
 
+	r.logger.Infof("Trap: %#v", trap)
+	r.logger.Infof("Result: %#v", result)
 	return nil
 }
 
